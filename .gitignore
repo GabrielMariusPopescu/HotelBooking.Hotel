@@ -4,3 +4,11 @@
 
 /Hotel/.vs/Hotel
 /.vs/Hotel
+/Hotel.API/bin/Debug/net8.0
+/Hotel.API/obj
+/Hotel.Application/bin/Debug/net8.0
+/Hotel.Application/obj
+/Hotel.Domain/bin/Debug/net8.0
+/Hotel.Domain/obj
+/Hotel.Persistence/bin/Debug/net8.0
+/Hotel.Persistence/obj
