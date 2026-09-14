@@ -1,8 +1,15 @@
 // Global using directives
 
+global using FluentValidation;
+global using Hotel.API.Middlewares;
+global using Hotel.Application;
 global using Hotel.Application.Commands;
 global using Hotel.Application.DTOs;
 global using Hotel.Application.Extensions;
+global using Hotel.Application.Queries;
 global using Hotel.Application.Requests;
+global using Hotel.Application.Responses;
+global using Hotel.Persistence;
 global using MediatR;
+global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc;

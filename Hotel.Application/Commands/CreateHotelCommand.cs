@@ -1,6 +1,6 @@
 ﻿namespace Hotel.Application.Commands;
 
-public class CreateHotel(
+public class CreateHotelCommand(
     Guid id, 
     string name, 
     string street, 

@@ -1,8 +1,21 @@
 ﻿namespace Hotel.Domain.Models;
 
-public class Hotel(string name, Address address)
+public class Hotel
 {
-    public string Name { get; set; } = name;
+    public Hotel()
+    {
+        
+    }
+    public Hotel(Guid id, string name, Address address)
+    {
+        Id = id;
+        Name = name;
+        Address = address;
+    }
 
-    public Address Address { get; set; } = address;
+    public Guid Id { get; private set; }
+
+    public string Name { get; private set; }
+
+    public Address Address { get; private set; }
 }
