@@ -16,7 +16,7 @@ public class HotelsController(ISender mediator) : ControllerBase
         request.Street,
         request.City,
         request.ZipCode,
-        request.CountryCode);
+        request.Country);
         
         var response = await mediator.Send(command);
 

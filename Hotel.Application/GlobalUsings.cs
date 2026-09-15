@@ -3,6 +3,7 @@
 global using FluentValidation;
 global using Hotel.Application.Commands;
 global using Hotel.Application.DTOs;
+global using Hotel.Application.Extensions;
 global using Hotel.Application.Repositories;
 global using Hotel.Application.Responses;
 global using Hotel.Application.Validators;

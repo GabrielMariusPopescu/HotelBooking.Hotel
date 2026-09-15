@@ -10,7 +10,7 @@ public class HotelConfiguration : IEntityTypeConfiguration<Domain.Models.Hotel>
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.ComplexProperty(h => h.Address, addressBuilder =>
+        builder.ComplexProperty(hotel => hotel.Address, addressBuilder =>
         {
             addressBuilder.IsRequired();
             
@@ -30,24 +30,9 @@ public class HotelConfiguration : IEntityTypeConfiguration<Domain.Models.Hotel>
                 .HasMaxLength(20);
             
             addressBuilder
-                .Property(address => address.CountryCode)
-                .HasColumnName("Address_CountryCode")
-                .HasMaxLength(2);
+                .Property(address => address.Country)
+                .HasColumnName("Address_Country")
+                .HasMaxLength(50);
         });
-
-        //List<Country> countries =
-        //[
-        //    new Country("England".ToDeterministicGuid(), "England", "EN"),
-        //    new Country("Northern Ireland".ToDeterministicGuid(), "Northern Ireland", "NI"),
-        //    new Country("Wales".ToDeterministicGuid(), "Wales", "WS"),
-        //    new Country("Scotland".ToDeterministicGuid(), "Scotland", "SC"),
-        //    new Country("Bulgaria".ToDeterministicGuid(), "Bulgaria", "BG"),
-        //    new Country("France".ToDeterministicGuid(), "France", "FR"),
-        //    new Country("Romania".ToDeterministicGuid(), "Romania", "RO"),
-        //    new Country("Iceland".ToDeterministicGuid(), "Iceland", "IC"),
-        //    new Country("Israel".ToDeterministicGuid(), "Israel", "IR"),
-        //    new Country("Austria".ToDeterministicGuid(), "Austria", "AT")
-        //];
-        //builder.HasData(countries);
     }
 }

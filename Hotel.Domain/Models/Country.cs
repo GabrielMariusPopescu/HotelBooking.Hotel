@@ -2,8 +2,6 @@
 
 public class Country : NameEntity
 {
-    public string CountryCode { get; private set; }
-
     public bool Disabled { get; private set; }
 
     public Country()
@@ -11,11 +9,10 @@ public class Country : NameEntity
         
     }
     
-    public Country(Guid id, string name, string countryCode)
+    public Country(Guid id, string name)
     {
         Id = id;
         Name = name;
-        CountryCode = countryCode;
         Disabled = false;
     }
 }

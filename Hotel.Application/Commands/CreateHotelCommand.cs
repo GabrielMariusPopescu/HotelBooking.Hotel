@@ -6,7 +6,7 @@ public class CreateHotelCommand(
     string street, 
     string city, 
     string zipCode, 
-    string countryCode) : IRequest<CreateHotelResponse>
+    string country) : IRequest<CreateHotelResponse>
 {
     public Guid Id { get; } = id;
 
@@ -18,5 +18,5 @@ public class CreateHotelCommand(
 
     public string ZipCode { get;  } = zipCode;
 
-    public string CountryCode { get; } = countryCode;
+    public string Country { get; } = country;
 }

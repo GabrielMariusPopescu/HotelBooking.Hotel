@@ -12,5 +12,5 @@ public class CreateHotelRequest
     
     public required string ZipCode { get; set; }
     
-    public required string CountryCode { get; set; }
+    public required string Country { get; set; }
 }

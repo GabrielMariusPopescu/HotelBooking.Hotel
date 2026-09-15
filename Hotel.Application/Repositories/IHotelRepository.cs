@@ -2,9 +2,13 @@
 
 public interface IHotelRepository
 {
-    Task<bool> Save(Domain.Models.Hotel hotel, CancellationToken cancellationToken);
+    Task<bool> SaveHotel(Domain.Models.Hotel hotel, CancellationToken cancellationToken);
 
-    Task<Domain.Models.Hotel?> Get(Guid id, CancellationToken cancellationToken);
+    Task<bool> SaveCountry(Country country, CancellationToken cancellationToken);
+    
+    Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken);
 
+    Task<Country?> GetCountry(string name, CancellationToken cancellationToken);
+    
     Task<IEnumerable<Country>> GetCountries(CancellationToken cancellationToken);
 }

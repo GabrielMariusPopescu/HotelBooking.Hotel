@@ -5,7 +5,7 @@ public static class CreateHotelResponseExtensions
     public static CreateHotelResponseDto ToDto(this CreateHotelResponse source)
         => new()
         {
-            HotelId = source.HotelId,
+            Id = source.HotelId,
             HotelCreated = source.HotelCreated,
             Message = source.Message
         };
