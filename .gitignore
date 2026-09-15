@@ -13,3 +13,5 @@
 /Hotel.Persistence/bin/Debug/net8.0
 /Hotel.Persistence/obj
 /.vs/ProjectEvaluation
+/Hotel.API.Tests/bin/Debug/net8.0
+/Hotel.API.Tests/obj

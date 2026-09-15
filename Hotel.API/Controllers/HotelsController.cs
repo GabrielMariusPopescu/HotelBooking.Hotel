@@ -5,7 +5,7 @@
 [Tags("Hotels")]
 public class HotelsController(ISender mediator) : ControllerBase
 {
-    [HttpPost("create")]
+    [HttpPost]
     [ProducesResponseType(typeof(CreateHotelResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<CreateHotelResponseDto> CreateHotel([FromBody] CreateHotelRequest request)

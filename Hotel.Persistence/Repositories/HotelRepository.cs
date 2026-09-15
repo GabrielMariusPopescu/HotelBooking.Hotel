@@ -27,12 +27,4 @@ public class HotelRepository(HotelDbContext context) : IHotelRepository
         var country = await context.Countries.FirstOrDefaultAsync(country => country.Name == name, cancellationToken);
         return country ?? null;
     }
-
-    public async Task<IEnumerable<Country>> GetCountries(CancellationToken cancellationToken) 
-        => await context
-            .Countries
-            .AsNoTracking()
-            .Where(country => !country.Disabled)
-            .OrderBy(country => country.Name)
-            .ToListAsync(cancellationToken);
 }

@@ -9,6 +9,4 @@ public interface IHotelRepository
     Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken);
 
     Task<Country?> GetCountry(string name, CancellationToken cancellationToken);
-    
-    Task<IEnumerable<Country>> GetCountries(CancellationToken cancellationToken);
 }
