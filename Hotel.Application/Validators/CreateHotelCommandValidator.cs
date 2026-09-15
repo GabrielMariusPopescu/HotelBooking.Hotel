@@ -21,12 +21,12 @@ public class CreateHotelCommandValidator : AbstractValidator<CreateHotelCommand>
         
         RuleFor(command => command.ZipCode)
             .NotEmpty()
-            .MaximumLength(10)
-            .WithMessage("Zip code can not be more than 10 characters.");
+            .MaximumLength(20)
+            .WithMessage("Zip code can not be more than 20 characters.");
         
         RuleFor(command => command.Country)
             .NotEmpty()
-            .MaximumLength(20)
-            .WithMessage("Country can not be more than 20 characters.");
+            .MaximumLength(50)
+            .WithMessage("Country can not be more than 50 characters.");
     }
 }

@@ -8,7 +8,7 @@ public class HotelsController(ISender mediator) : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(CreateHotelResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<CreateHotelResponseDto> CreateHotel([FromBody] CreateHotelRequest request)
+    public async Task<IActionResult> CreateHotel([FromBody] CreateHotelRequest request)
     {
         var command = new CreateHotelCommand(
         request.Id ?? Guid.Empty,
@@ -19,19 +19,20 @@ public class HotelsController(ISender mediator) : ControllerBase
         request.Country);
         
         var response = await mediator.Send(command);
-
-        return response.ToDto();
-
+        return response.HotelCreated 
+            ? Created("api/hotels", response.ToDto()) 
+            : BadRequest();
     }
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(HotelResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<HotelResponseDto> GetHotel([FromRoute] Guid id)
+    public async Task<IActionResult> GetHotel([FromRoute] Guid id)
     {
         var query = new GetHotelDetailsQuery(id);
         var response = await mediator.Send(query);
-
-        return response.ToDto();
+        return response.HotelRetrieved 
+            ? Ok(response.ToDto()) 
+            : NotFound();
     }
 }

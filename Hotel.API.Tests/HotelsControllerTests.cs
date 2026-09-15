@@ -32,7 +32,7 @@ public class HotelsControllerTests
         var expectedResponse = CreateHotelResponse.Success(hotelId);
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateHotelCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(sender => sender.Send(It.IsAny<CreateHotelCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResponse);
 
         // Act
@@ -42,13 +42,14 @@ public class HotelsControllerTests
         result.Should().NotBeNull();
 
         // Verify the command was dispatched with the exact parameters from the request
-        _mediatorMock.Verify(m => m.Send(It.Is<CreateHotelCommand>(c =>
-            c.Id == request.Id &&
-            c.Name == request.Name &&
-            c.Street == request.Street &&
-            c.City == request.City &&
-            c.ZipCode == request.ZipCode &&
-            c.Country == request.Country
+        _mediatorMock.Verify(sender => 
+            sender.Send(It.Is<CreateHotelCommand>(command =>
+            command.Id == request.Id &&
+            command.Name == request.Name &&
+            command.Street == request.Street &&
+            command.City == request.City &&
+            command.ZipCode == request.ZipCode &&
+            command.Country == request.Country
         ), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -57,11 +58,11 @@ public class HotelsControllerTests
     {
         // Arrange
         var hotelId = Guid.NewGuid();
-        var expectedResponse = HotelResponse.Success(hotelId);
+        var response = HotelResponse.Success(hotelId);
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetHotelDetailsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedResponse);
+            .Setup(sender => sender.Send(It.IsAny<GetHotelDetailsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
 
         // Act
         var result = await _sut.GetHotel(hotelId);
@@ -70,8 +71,8 @@ public class HotelsControllerTests
         result.Should().NotBeNull();
 
         // Verify the query was dispatched with the correct ID
-        _mediatorMock.Verify(m => m.Send(It.Is<GetHotelDetailsQuery>(q =>
-            q.Id == hotelId
-        ), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(sender => 
+            sender.Send(It.Is<GetHotelDetailsQuery>(query => 
+                query.Id == hotelId), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
