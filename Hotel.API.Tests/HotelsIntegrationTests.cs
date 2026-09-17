@@ -24,18 +24,19 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/hotels/create", request, CancellationToken.None);
+        var response = await _client.PostAsJsonAsync("/api/hotels", request, TestContext.Current.CancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            var error = await response.Content.ReadAsStringAsync(CancellationToken.None);
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
         }
         
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var dto = await response.Content.ReadFromJsonAsync<CreateHotelResponseDto>(CancellationToken.None);
+        var dto = await response.Content.ReadFromJsonAsync<CreateHotelResponseDto>(TestContext.Current.CancellationToken);
         dto.Should().NotBeNull();
         dto.Id.Should().Be(id);
     }
@@ -61,21 +62,22 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
             Country = "Spain"
         };
 
-        await _client.PostAsJsonAsync("/api/hotels/create", request, CancellationToken.None);
+        await _client.PostAsJsonAsync("/api/hotels", request, TestContext.Current.CancellationToken);
 
         // Act
-        var response = await _client.GetAsync($"/api/hotels/{id}", CancellationToken.None);
+        var response = await _client.GetAsync($"/api/hotels/{id}", TestContext.Current.CancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            var error = await response.Content.ReadAsStringAsync(CancellationToken.None);
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
         }
 
         // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var fetchedHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto>(CancellationToken.None);
+        var fetchedHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto>(TestContext.Current.CancellationToken);
         fetchedHotel.Should().NotBeNull();
         fetchedHotel.Id.Should().Be(id);
     }
@@ -87,15 +89,16 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         var id = Guid.NewGuid();
 
         // Act
-        var response = await _client.GetAsync($"/api/hotels/{id}", CancellationToken.None);
+        var response = await _client.GetAsync($"/api/hotels/{id}", TestContext.Current.CancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            var error = await response.Content.ReadAsStringAsync(CancellationToken.None);
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
         }
 
         // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 

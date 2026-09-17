@@ -11,5 +11,6 @@ public class HotelDbContext(DbContextOptions<HotelDbContext> options) : DbContex
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfiguration(new HotelConfiguration());
+        modelBuilder.ApplyConfiguration(new CountryConfiguration());
     }
 }

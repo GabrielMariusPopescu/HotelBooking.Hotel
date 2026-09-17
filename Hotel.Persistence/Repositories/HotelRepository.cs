@@ -16,15 +16,9 @@ public class HotelRepository(HotelDbContext context) : IHotelRepository
         return row > 0;
     }
     
-    public async Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken)
-    {
-        var hotel = await context.Hotels.FindAsync(id, cancellationToken);
-        return hotel ?? null;
-    }
+    public async Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken) 
+        => await context.Hotels.FirstOrDefaultAsync(hotel => hotel.Id == id, cancellationToken);
 
-    public async Task<Country?> GetCountry(string name, CancellationToken cancellationToken)
-    {
-        var country = await context.Countries.FirstOrDefaultAsync(country => country.Name == name, cancellationToken);
-        return country ?? null;
-    }
+    public async Task<Country?> GetCountry(string name, CancellationToken cancellationToken) 
+        => await context.Countries.FirstOrDefaultAsync(country => country.Name == name, cancellationToken);
 }
