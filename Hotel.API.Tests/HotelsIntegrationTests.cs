@@ -91,14 +91,14 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         // Act
         var response = await _client.GetAsync($"/api/hotels/{id}", TestContext.Current.CancellationToken);
 
-        if (!response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
         }
 
         // Assert
-        response.IsSuccessStatusCode.Should().BeTrue();
+        response.IsSuccessStatusCode.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 

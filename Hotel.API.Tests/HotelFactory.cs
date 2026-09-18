@@ -18,10 +18,11 @@ public class HotelFactory : WebApplicationFactory<ApiMaker>
                 services.Remove(descriptor);
             }
 
+            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection.Open();
+
             services.AddDbContext<HotelDbContext>(options =>
             {
-                _connection = new SqliteConnection("DataSource=:memory:");
-                _connection.Open();
                 options.UseSqlite(_connection);
             });
 
