@@ -1,5 +1,6 @@
-﻿namespace Hotel.API.Tests;
+﻿namespace Hotel.API.Tests.Integration;
 
+[ExcludeFromCodeCoverage]
 public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelFactory>
 {
     private readonly HttpClient _client = factory.CreateClient();

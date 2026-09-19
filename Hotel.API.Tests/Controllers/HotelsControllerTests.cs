@@ -1,5 +1,6 @@
 namespace Hotel.API.Tests.Controllers;
 
+[ExcludeFromCodeCoverage]
 public class HotelsControllerTests
 {
     private readonly Mock<ISender> _mediatorMock;

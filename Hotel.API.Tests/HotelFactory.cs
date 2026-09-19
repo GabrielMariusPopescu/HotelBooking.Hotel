@@ -1,5 +1,6 @@
 ﻿namespace Hotel.API.Tests;
 
+[ExcludeFromCodeCoverage]
 public class HotelFactory : WebApplicationFactory<ApiMaker>
 {
     private SqliteConnection? _connection;

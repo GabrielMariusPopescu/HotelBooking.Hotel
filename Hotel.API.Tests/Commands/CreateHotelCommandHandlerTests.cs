@@ -1,5 +1,6 @@
 ﻿namespace Hotel.API.Tests.Commands;
 
+[ExcludeFromCodeCoverage]
 public class CreateHotelCommandHandlerTests
 {
     private readonly Mock<IHotelRepository> _repositoryMock;

@@ -2,6 +2,7 @@
 
 global using FluentAssertions;
 global using Hotel.API.Controllers;
+global using Hotel.API.Tests;
 global using Hotel.Application.Commands;
 global using Hotel.Application.DTOs;
 global using Hotel.Application.Extensions;
@@ -19,5 +20,6 @@ global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
 global using Moq;
+global using System.Diagnostics.CodeAnalysis;
 global using System.Net;
 global using System.Net.Http.Json;
