@@ -1,4 +1,4 @@
-namespace Hotel.API.Tests;
+namespace Hotel.API.Tests.Controllers;
 
 public class HotelsControllerTests
 {

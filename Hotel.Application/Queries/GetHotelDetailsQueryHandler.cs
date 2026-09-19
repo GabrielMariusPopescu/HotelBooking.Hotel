@@ -1,12 +1,12 @@
 ﻿namespace Hotel.Application.Queries;
 
-public class GetHotelDetailsQueryHandler(IHotelRepository repository) : IRequestHandler<GetHotelDetailsQuery, HotelResponse>
+public class GetHotelDetailsQueryHandler(IHotelRepository repository) : IRequestHandler<GetHotelDetailsQuery, HotelResponse<Domain.Models.Hotel>>
 {
-    public async Task<HotelResponse> Handle(GetHotelDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<HotelResponse<Domain.Models.Hotel>> Handle(GetHotelDetailsQuery request, CancellationToken cancellationToken)
     {
         var hotel = await repository.GetHotel(request.Id, cancellationToken);
         return hotel != null
-            ? HotelResponse.Success(request.Id)
-            : HotelResponse.Failure(request.Id, $"Retrieve hotel with '{request.Id}' identifier failed.");
+            ? HotelResponse<Domain.Models.Hotel>.Success(request.Id, hotel)
+            : HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Retrieve hotel with '{request.Id}' identifier failed.");
     }
 }

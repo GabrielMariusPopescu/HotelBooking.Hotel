@@ -6,7 +6,7 @@
 public class HotelsController(ISender mediator) : ControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(typeof(CreateHotelResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(HotelResponseDto<Domain.Models.Hotel>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateHotel([FromBody] CreateHotelRequest request)
     {
@@ -19,19 +19,31 @@ public class HotelsController(ISender mediator) : ControllerBase
         request.Country);
         
         var response = await mediator.Send(command);
-        return response.HotelCreated 
+        return response.IsSuccessful
             ? Created("api/hotels", response.ToDto()) 
             : BadRequest();
     }
 
+    [HttpGet]
+    [ProducesResponseType(typeof(HotelResponseDto<IEnumerable<Domain.Models.Hotel>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetHotels()
+    {
+        var query = new GetHotelsQuery();
+        var response = await mediator.Send(query);
+        return response.IsSuccessful
+            ? Ok(response.ToDto())
+            : NotFound();
+    }
+
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(HotelResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(HotelResponseDto<Domain.Models.Hotel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetHotel([FromRoute] Guid id)
     {
         var query = new GetHotelDetailsQuery(id);
         var response = await mediator.Send(query);
-        return response.HotelRetrieved 
+        return response.IsSuccessful
             ? Ok(response.ToDto()) 
             : NotFound();
     }

@@ -19,6 +19,9 @@ public class HotelRepository(HotelDbContext context) : IHotelRepository
     public async Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken) 
         => await context.Hotels.FirstOrDefaultAsync(hotel => hotel.Id == id, cancellationToken);
 
+    public async Task<IEnumerable<Domain.Models.Hotel>> GetHotels(CancellationToken cancellationToken)
+        => await context.Hotels.ToListAsync(cancellationToken);
+
     public async Task<Country?> GetCountry(string name, CancellationToken cancellationToken) 
         => await context.Countries.FirstOrDefaultAsync(country => country.Name == name, cancellationToken);
 }

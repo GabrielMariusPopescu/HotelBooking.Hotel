@@ -36,7 +36,7 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var dto = await response.Content.ReadFromJsonAsync<CreateHotelResponseDto>(TestContext.Current.CancellationToken);
+        var dto = await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
         dto.Should().NotBeNull();
         dto.Id.Should().Be(id);
     }
@@ -77,7 +77,7 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var fetchedHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto>(TestContext.Current.CancellationToken);
+        var fetchedHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
         fetchedHotel.Should().NotBeNull();
         fetchedHotel.Id.Should().Be(id);
     }

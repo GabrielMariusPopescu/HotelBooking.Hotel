@@ -6,7 +6,7 @@ public class CreateHotelCommand(
     string street, 
     string city, 
     string zipCode, 
-    string country) : IRequest<CreateHotelResponse>
+    string country) : IRequest<HotelResponse<Domain.Models.Hotel>>
 {
     public Guid Id { get; } = id;
 
