@@ -14,6 +14,8 @@ global using Hotel.Domain.Models;
 global using Hotel.Persistence;
 global using MediatR;
 global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.Testing;
 global using Microsoft.AspNetCore.TestHost;
 global using Microsoft.Data.Sqlite;
