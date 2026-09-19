@@ -15,12 +15,8 @@ public class HotelsControllerTests
     public async Task CreateHotel_WhenValidRequest_SendsCommandAndReturnsDto()
     {
         // Arrange
-        var hotelId = Guid.NewGuid();
-
-        // Assuming CreateHotelRequest matches the properties mapped in the controller
         var request = new CreateHotelRequest
         {
-            Id = hotelId,
             Name = "Grand Plaza",
             Street = "123 Main Street",
             City = "Dallas",
@@ -29,7 +25,7 @@ public class HotelsControllerTests
         };
 
         // We assume CreateHotelResponse has a Success factory method based on the handler
-        var expectedResponse = HotelResponse<Domain.Models.Hotel>.Success(hotelId, request.ToHotel());
+        var expectedResponse = HotelResponse<Domain.Models.Hotel>.Success(null, request.ToHotel());
 
         _mediatorMock
             .Setup(sender => sender.Send(It.IsAny<CreateHotelCommand>(), It.IsAny<CancellationToken>()))
@@ -44,7 +40,6 @@ public class HotelsControllerTests
         // Verify the command was dispatched with the exact parameters from the request
         _mediatorMock.Verify(sender => 
             sender.Send(It.Is<CreateHotelCommand>(command =>
-            command.Id == request.Id &&
             command.Name == request.Name &&
             command.Street == request.Street &&
             command.City == request.City &&

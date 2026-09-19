@@ -10,12 +10,10 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
     public async Task CreateHotel_WhenValidRequest_ReturnsSuccessAndDto()
     {
         // Arrange
-        var id = "Integration Plaza".ToDeterministicGuid();
         const string uniqueName = "Integration Plaza";
 
         var request = new CreateHotelRequest
         {
-            Id = id,
             Name = uniqueName,
             Street = "123 Test Ave",
             City = "Test ville",
@@ -38,7 +36,7 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
 
         var dto = await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
         dto.Should().NotBeNull();
-        dto.Id.Should().Be(id);
+        dto.Data.Should().NotBeNull();
     }
 
 #endregion
@@ -49,12 +47,10 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
     public async Task GetHotel_WhenValidId_ReturnsOkAndHotel()
     {
         // Arrange
-        var id = "Seeded Resort".ToDeterministicGuid();
         const string uniqueName = "Seeded Resort";
 
         var request = new CreateHotelRequest
         {
-            Id = id,
             Name = uniqueName,
             Street = "456 Ocean Blvd",
             City = "Coast City",
@@ -62,10 +58,18 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
             Country = "Spain"
         };
 
-        await _client.PostAsJsonAsync("/api/hotels", request, TestContext.Current.CancellationToken);
+        var response = await _client.PostAsJsonAsync("/api/hotels", request, TestContext.Current.CancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
+        }
 
+        var createdHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
+        
+        
         // Act
-        var response = await _client.GetAsync($"/api/hotels/{id}", TestContext.Current.CancellationToken);
+        response = await _client.GetAsync($"/api/hotels/{createdHotel?.Id}", TestContext.Current.CancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -79,7 +83,7 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
 
         var fetchedHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
         fetchedHotel.Should().NotBeNull();
-        fetchedHotel.Id.Should().Be(id);
+        fetchedHotel.Id.Should().NotBe(Guid.Empty);
     }
 
     [Fact]

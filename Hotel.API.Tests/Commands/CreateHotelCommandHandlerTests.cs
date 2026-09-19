@@ -35,7 +35,7 @@ public class CreateHotelCommandHandlerTests
 
         // Assert
         result.IsSuccessful.Should().BeTrue();
-        result.Id.Should().Be(command.Id);
+        result.Id.Should().NotBeNull();
 
         // Verify that SaveCountry was bypassed because it already exists
         _repositoryMock.Verify(r => r.SaveCountry(It.IsAny<Country>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -133,13 +133,8 @@ public class CreateHotelCommandHandlerTests
     #region Test Data Factories
 
     // Isolates the DTO creation to satisfy the Open/Closed Principle.
-    private static CreateHotelCommand CreateValidCommand(Guid? id = null) 
-        => new(id ?? Guid.NewGuid(),
-            "Grand Plaza",
-            "123 Main St",
-            "Metropolis",
-            "12345",
-            "United States");
+    private static CreateHotelCommand CreateValidCommand() 
+        => new("Grand Plaza", "123 Main St", "Metropolis", "12345", "United States");
 
     #endregion
 }

@@ -2,8 +2,6 @@
 
 public class CreateHotelRequest
 {
-    public Guid? Id { get; set; }
-
     public required string Name { get; set; }
     
     public required string Street { get; set; }

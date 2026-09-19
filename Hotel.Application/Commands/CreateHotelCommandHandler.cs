@@ -13,13 +13,13 @@ public class CreateHotelCommandHandler(IHotelRepository repository) : IRequestHa
         {
             saved = await repository.SaveCountry(country, cancellationToken);
             if (!saved)
-                return HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Create '{request.Country}' country failed.");
+                return HotelResponse<Domain.Models.Hotel>.Failure(null, $"Create '{request.Country}' country failed.");
         }
 
-        var hotel = new Domain.Models.Hotel(request.Id, request.Name, address);
+        var hotel = new Domain.Models.Hotel(Guid.NewGuid(), request.Name, address);
         saved = await repository.SaveHotel(hotel, cancellationToken);
         return saved 
-            ? HotelResponse<Domain.Models.Hotel>.Success(request.Id, hotel) 
-            : HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Create '{request.Name}' hotel failed.");
+            ? HotelResponse<Domain.Models.Hotel>.Success(hotel.Id, hotel) 
+            : HotelResponse<Domain.Models.Hotel>.Failure(null, $"Create '{request.Name}' hotel failed.");
     }
 }

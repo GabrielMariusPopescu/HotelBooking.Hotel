@@ -6,9 +6,16 @@ public class Hotel
     {
         
     }
+    
     public Hotel(Guid id, string name, Address address)
     {
         Id = id;
+        Name = name;
+        Address = address;
+    }
+
+    public Hotel(string name, Address address)
+    {
         Name = name;
         Address = address;
     }

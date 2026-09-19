@@ -27,7 +27,7 @@ public class CreateHotelCommandHandlerTests
             .ReturnsAsync(existingCountry);
 
         _repositoryMock
-            .Setup(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .Setup(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // Act
@@ -35,11 +35,11 @@ public class CreateHotelCommandHandlerTests
 
         // Assert
         result.IsSuccessful.Should().BeTrue();
-        result.Id.Should().Be(command.Id);
+        result.Id.Should().NotBeNull();
 
         // Verify that SaveCountry was bypassed because it already exists
         _repositoryMock.Verify(r => r.SaveCountry(It.IsAny<Country>(), It.IsAny<CancellationToken>()), Times.Never);
-        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
+        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -59,7 +59,7 @@ public class CreateHotelCommandHandlerTests
             .ReturnsAsync(true);
 
         _repositoryMock
-            .Setup(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .Setup(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // Act
@@ -70,7 +70,7 @@ public class CreateHotelCommandHandlerTests
 
         // Verify both save operations occurred
         _repositoryMock.Verify(r => r.SaveCountry(It.IsAny<Country>(), It.IsAny<CancellationToken>()), Times.Once);
-        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
+        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -97,7 +97,7 @@ public class CreateHotelCommandHandlerTests
         result.Message.Should().Contain(command.Country); // Validates the custom error message logic
 
         // Verify that Hotel persistence was never attempted due to the short-circuit
-        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
+        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -114,7 +114,7 @@ public class CreateHotelCommandHandlerTests
 
         // Simulate database failure when saving the hotel entity
         _repositoryMock
-            .Setup(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .Setup(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act
@@ -124,7 +124,7 @@ public class CreateHotelCommandHandlerTests
         result.IsSuccessful.Should().BeFalse();
         result.Message.Should().Contain(command.Name); // Validates the custom error message logic
 
-        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
+        _repositoryMock.Verify(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -133,13 +133,8 @@ public class CreateHotelCommandHandlerTests
     #region Test Data Factories
 
     // Isolates the DTO creation to satisfy the Open/Closed Principle.
-    private static CreateHotelCommand CreateValidCommand(Guid? id = null) 
-        => new(id ?? Guid.NewGuid(),
-            "Grand Plaza",
-            "123 Main St",
-            "Metropolis",
-            "12345",
-            "United States");
+    private static CreateHotelCommand CreateValidCommand() 
+        => new("Grand Plaza", "123 Main St", "Metropolis", "12345", "United States");
 
     #endregion
 }

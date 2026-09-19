@@ -11,7 +11,6 @@ public class HotelsController(ISender mediator) : ControllerBase
     public async Task<IActionResult> CreateHotel([FromBody] CreateHotelRequest request)
     {
         var command = new CreateHotelCommand(
-        request.Id ?? Guid.Empty,
         request.Name,
         request.Street,
         request.City,

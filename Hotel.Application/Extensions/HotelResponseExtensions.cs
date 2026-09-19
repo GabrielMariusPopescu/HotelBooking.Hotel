@@ -23,7 +23,6 @@ public static class HotelResponseExtensions
 
     public static Domain.Models.Hotel ToHotel(this CreateHotelRequest request)
         => new(
-            request.Id.GetValueOrDefault(),
             request.Name,
             new Address(
                 request.Street,
