@@ -1,11 +1,22 @@
 ﻿namespace Hotel.API.Tests.Integration;
 
 [ExcludeFromCodeCoverage]
-public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelFactory>
+public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelFactory>, IAsyncLifetime
 {
     private readonly HttpClient _client = factory.CreateClient();
 
-    #region CreateHotel Tests
+    public async ValueTask InitializeAsync()
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
+
+        dbContext.Hotels.RemoveRange(dbContext.Hotels);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    
+    #region Create Hotel Tests
 
     [Fact]
     public async Task CreateHotel_WhenValidRequest_ReturnsSuccessAndDto()
@@ -40,9 +51,140 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         dto.Data.Should().NotBeNull();
     }
 
+    #endregion
+
+    #region Update Hotel Tests
+
+    [Fact]
+    public async Task UpdateHotel_WhenValidRequest_ReturnsSuccess()
+    {
+        // Arrange: Seed the database by creating a hotel first
+        const string uniqueName = "Pre-Update Hotel";
+
+        var createRequest = new CreateHotelRequest
+        {
+            Name = uniqueName,
+            Street = "123 Old Street",
+            City = "Old City",
+            ZipCode = "12345",
+            Country = "United Kingdom"
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/hotels", createRequest, TestContext.Current.CancellationToken);
+        var createdHotel = await createResponse.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        createdHotel.Should().NotBeNull();
+
+        var updateRequest = new UpdateHotelCommand(
+            createdHotel.Id.GetValueOrDefault(),
+            "Post-Update Hotel",
+            "456 New Street",
+            "New City",
+            "54321",
+            "United Kingdom"
+        );
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/api/hotels/{createdHotel.Id}", updateRequest, TestContext.Current.CancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"API Failed with {response.StatusCode}: {error}");
+        }
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task UpdateHotel_WhenHotelDoesNotExist_ReturnsNotFound()
+    {
+        // Arrange
+        var nonExistentId = Guid.NewGuid();
+
+        var updateRequest = new UpdateHotelCommand(
+            nonExistentId,
+            "Ghost Hotel",
+            "Nowhere Street",
+            "Void City",
+            "00000",
+            "NA"
+        );
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/api/hotels/{nonExistentId}", updateRequest, TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    #endregion
+
+    #region Get All Tests
+
+    [Fact]
+    public async Task GetHotels_WhenHotelsExists_ReturnsOkAndHotels()
+    {
+        // Arrange
+        const string uniqueName = "Seeded Resort";
+
+        var request = new CreateHotelRequest
+        {
+            Name = uniqueName,
+            Street = "456 Ocean Blvd",
+            City = "Coast City",
+            ZipCode = "54321",
+            Country = "Spain"
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/hotels", request, TestContext.Current.CancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
+        }
+
+        await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
+        
+        // Act
+        response = await _client.GetAsync("/api/hotels", TestContext.Current.CancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
+        }
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var fetchedHotels = await response.Content.ReadFromJsonAsync<HotelResponseDto<IEnumerable<Domain.Models.Hotel>>>(TestContext.Current.CancellationToken);
+        fetchedHotels.Should().NotBeNull();
+        fetchedHotels.Id.Should().NotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public async Task GetHotels_WhenHotelsDoesNotExists_ReturnsNotFound()
+    {
+        // Act
+        var response = await _client.GetAsync("/api/hotels", TestContext.Current.CancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"API Failed with {response.StatusCode}. Details: {error}");
+        }
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+    
 #endregion
 
-#region GetHotel Tests
+    #region Get Hotel By Id Tests
 
     [Fact]
     public async Task GetHotel_WhenValidId_ReturnsOkAndHotel()
@@ -67,7 +209,6 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
         }
 
         var createdHotel = await response.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(TestContext.Current.CancellationToken);
-        
         
         // Act
         response = await _client.GetAsync($"/api/hotels/{createdHotel?.Id}", TestContext.Current.CancellationToken);

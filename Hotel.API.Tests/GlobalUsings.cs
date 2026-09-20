@@ -11,6 +11,7 @@ global using Hotel.Application.Repositories;
 global using Hotel.Application.Requests;
 global using Hotel.Application.Responses;
 global using Hotel.Domain.Models;
+global using Hotel.Domain.Records;
 global using Hotel.Persistence;
 global using MediatR;
 global using Microsoft.AspNetCore.Hosting;

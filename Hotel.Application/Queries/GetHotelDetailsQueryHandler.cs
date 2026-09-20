@@ -7,6 +7,6 @@ public class GetHotelDetailsQueryHandler(IHotelRepository repository) : IRequest
         var hotel = await repository.GetHotel(request.Id, cancellationToken);
         return hotel != null
             ? HotelResponse<Domain.Models.Hotel>.Success(request.Id, hotel)
-            : HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Retrieve hotel with '{request.Id}' identifier failed.");
+            : HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Hotel with '{request.Id}' identifier could not be found.");
     }
 }

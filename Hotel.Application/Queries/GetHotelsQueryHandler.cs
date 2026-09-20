@@ -7,6 +7,6 @@ public class GetHotelsQueryHandler(IHotelRepository repository) : IRequestHandle
         var hotels = (await repository.GetHotels(cancellationToken)).ToList();
         return hotels.Any() 
             ? HotelResponse<IEnumerable<Domain.Models.Hotel>>.Success(null, hotels)
-            : HotelResponse<IEnumerable<Domain.Models.Hotel>>.Failure(null, "No hotel was found.");
+            : HotelResponse<IEnumerable<Domain.Models.Hotel>>.Failure(null, "No hotels found.");
     }
 }

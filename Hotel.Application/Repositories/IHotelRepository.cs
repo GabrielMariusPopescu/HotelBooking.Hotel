@@ -4,6 +4,8 @@ public interface IHotelRepository
 {
     Task<bool> SaveHotel(Domain.Models.Hotel hotel, CancellationToken cancellationToken);
 
+    Task<bool> UpdateHotel(Domain.Models.Hotel hotel, CancellationToken cancellationToken);
+
     Task<bool> SaveCountry(Country country, CancellationToken cancellationToken);
     
     Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken);

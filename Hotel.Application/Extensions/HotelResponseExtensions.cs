@@ -30,4 +30,15 @@ public static class HotelResponseExtensions
                 request.ZipCode,
                 request.Country)
             );
+
+    public static Domain.Models.Hotel ToHotel(this UpdateHotelRequest request)
+        => new(
+            request.Id,
+            request.Name,
+            new Address(
+                request.Street, 
+                request.City, 
+                request.ZipCode, 
+                request.Country)
+            );
 }

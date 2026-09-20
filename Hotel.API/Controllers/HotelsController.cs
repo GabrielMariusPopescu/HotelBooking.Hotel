@@ -23,6 +23,25 @@ public class HotelsController(ISender mediator) : ControllerBase
             : BadRequest();
     }
 
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(HotelResponseDto<Domain.Models.Hotel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateHotel([FromRoute] Guid id, [FromBody] UpdateHotelRequest request)
+    {
+        var command = new UpdateHotelCommand(
+            id,
+            request.Name,
+            request.Street,
+            request.City,
+            request.ZipCode,
+            request.Country);
+
+        var response = await mediator.Send(command);
+        return response.IsSuccessful
+            ? Ok(response.ToDto())
+            : BadRequest();
+    }
+    
     [HttpGet]
     [ProducesResponseType(typeof(HotelResponseDto<IEnumerable<Domain.Models.Hotel>>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -28,7 +28,7 @@ public class CreateHotelCommandHandlerTests
             .ReturnsAsync(existingCountry);
 
         _repositoryMock
-            .Setup(r => r.SaveHotel(It.IsAny<Hotel.Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .Setup(r => r.SaveHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // Act
@@ -133,7 +133,6 @@ public class CreateHotelCommandHandlerTests
 
     #region Test Data Factories
 
-    // Isolates the DTO creation to satisfy the Open/Closed Principle.
     private static CreateHotelCommand CreateValidCommand() 
         => new("Grand Plaza", "123 Main St", "Metropolis", "12345", "United States");
 

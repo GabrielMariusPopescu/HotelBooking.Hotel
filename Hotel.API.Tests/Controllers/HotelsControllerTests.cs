@@ -12,6 +12,8 @@ public class HotelsControllerTests
         _sut = new HotelsController(_mediatorMock.Object);
     }
 
+    #region Create Tests
+
     [Fact]
     public async Task CreateHotel_WhenValidRequest_SendsCommandAndReturnsSuccess()
     {
@@ -88,6 +90,95 @@ public class HotelsControllerTests
             ), It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    #endregion
+
+    #region Update Tests
+    
+    [Fact]
+    public async Task UpdateHotel_WhenValidRequest_SendsCommandAndReturnsSuccess()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        UpdateHotelRequest request = new()
+        {
+            Id = id, 
+            Name = "Four Season", 
+            Street = "123 Major Street", 
+            City = "Belgrade",
+            ZipCode = "123456", 
+            Country = "Serbia"
+        };
+
+        var response = HotelResponse<Domain.Models.Hotel>.Success(request.Id, request.ToHotel());
+
+        _mediatorMock
+            .Setup(repository => repository.Send(It.IsAny<UpdateHotelCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+        
+        // Act
+        var actual = await _sut.UpdateHotel(id, request);
+        
+        // Assert
+        actual.Should().NotBeNull();
+        var result = actual.Should().BeOfType<OkObjectResult>().Subject;
+        result.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+        // Verify
+        _mediatorMock.Verify(sender =>
+            sender.Send(It.Is<UpdateHotelCommand>(command =>
+                command.Id == request.Id && 
+                command.Name == request.Name &&
+                command.Street == request.Street &&
+                command.City == request.City &&
+                command.ZipCode == request.ZipCode &&
+                command.Country == request.Country
+            ), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateHotel_WhenInvalidRequest_SendsCommandAndReturnsFailure()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        UpdateHotelRequest request = new()
+        {
+            Id = id,
+            Name = "Four Season",
+            Street = "123 Major Street",
+            City = "Belgrade",
+            ZipCode = "123456",
+            Country = "Serbia"
+        };
+
+        var response = HotelResponse<Domain.Models.Hotel>.Failure(id, $"Update hotel with '{id}' failed.");
+
+        _mediatorMock
+            .Setup(repository => repository.Send(It.IsAny<UpdateHotelCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var actual = await _sut.UpdateHotel(id, request);
+
+        // Assert
+        actual.Should().NotBeNull();
+        var result = actual.Should().BeOfType<BadRequestResult>().Subject;
+        result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+        // Verify
+        _mediatorMock.Verify(sender =>
+            sender.Send(It.Is<UpdateHotelCommand>(command =>
+                command.Id == request.Id &&
+                command.Name == request.Name &&
+                command.Street == request.Street &&
+                command.City == request.City &&
+                command.ZipCode == request.ZipCode &&
+                command.Country == request.Country
+            ), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
+
+    #region Get All Tests
     [Fact]
     public async Task GetHotels_WhenExisting_SendsQueryAndReturnsSuccess()
     {
@@ -112,7 +203,7 @@ public class HotelsControllerTests
     public async Task GetHotels_WhenNotExisting_SendQueryAndReturnsFailure()
     {
         // Arrange
-        var response = HotelResponse<IEnumerable<Domain.Models.Hotel>>.Failure(null, "No hotels are found.");
+        var response = HotelResponse<IEnumerable<Domain.Models.Hotel>>.Failure(null, "No hotels found.");
 
         _mediatorMock
             .Setup(sender => sender.Send(It.IsAny<GetHotelsQuery>(), It.IsAny<CancellationToken>()))
@@ -126,7 +217,11 @@ public class HotelsControllerTests
         var result = actual.Should().BeOfType<NotFoundResult>().Subject;
         result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
     }
-    
+
+    #endregion
+
+    #region Get Tests
+
     [Fact]
     public async Task GetHotel_WhenValidId_SendsQueryAndReturnsSuccess()
     {
@@ -157,7 +252,7 @@ public class HotelsControllerTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var response = HotelResponse<Domain.Models.Hotel>.Failure(null, $"Hotel with '{id}' unique identifier could not be found.");
+        var response = HotelResponse<Domain.Models.Hotel>.Failure(null, $"Hotel with '{id}' identifier could not be found.");
 
         _mediatorMock
             .Setup(sender => sender.Send(It.IsAny<GetHotelDetailsQuery>(), It.IsAny<CancellationToken>()))
@@ -176,4 +271,6 @@ public class HotelsControllerTests
             sender.Send(It.Is<GetHotelDetailsQuery>(query =>
                 query.Id == id), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    #endregion
 }

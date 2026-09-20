@@ -20,9 +20,9 @@ public class Hotel
         Address = address;
     }
 
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; }
 
-    public string Name { get; private set; }
+    public string Name { get; set; }
 
-    public Address Address { get; private set; }
+    public Address Address { get; set; }
 }
