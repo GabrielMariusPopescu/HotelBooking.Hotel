@@ -22,11 +22,11 @@ public class UpdateHotelCommandHandlerTests
         var existingHotel = CreateExistingHotel(command.Id);
 
         _repositoryMock
-            .Setup(r => r.GetHotel(command.Id, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingHotel);
 
         _repositoryMock
-            .Setup(r => r.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // Act
@@ -39,8 +39,8 @@ public class UpdateHotelCommandHandlerTests
         actual.Data!.Name.Should().Be(command.Name);
         actual.Data.Address.City.Should().Be(command.City);
 
-        _repositoryMock.Verify(r => r.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
-        _repositoryMock.Verify(r => r.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class UpdateHotelCommandHandlerTests
 
         // Verify 
         _repositoryMock.Verify(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
-        _repositoryMock.Verify(r => r.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Never);
+        _repositoryMock.Verify(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -74,11 +74,11 @@ public class UpdateHotelCommandHandlerTests
         var existingHotel = CreateExistingHotel(command.Id);
 
         _repositoryMock
-            .Setup(r => r.GetHotel(command.Id, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingHotel);
 
         _repositoryMock
-            .Setup(r => r.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act
@@ -90,8 +90,8 @@ public class UpdateHotelCommandHandlerTests
         actual.Message.Should().Contain(command.Id.ToString());
 
         // Verify
-        _repositoryMock.Verify(r => r.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
-        _repositoryMock.Verify(r => r.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     #endregion
