@@ -8,6 +8,13 @@ public class HotelRepository(HotelDbContext context) : IHotelRepository
         var row = await context.SaveChangesAsync(cancellationToken);
         return row > 0;
     }
+    
+    public async Task<bool> SaveCountry(Country country, CancellationToken cancellationToken)
+    {
+        await context.Countries.AddAsync(country, cancellationToken);
+        var row = await context.SaveChangesAsync(cancellationToken);
+        return row > 0;
+    }
 
     public async Task<bool> UpdateHotel(Domain.Models.Hotel hotel, CancellationToken cancellationToken)
     {
@@ -16,13 +23,13 @@ public class HotelRepository(HotelDbContext context) : IHotelRepository
         return row > 0;
     }
 
-    public async Task<bool> SaveCountry(Country country, CancellationToken cancellationToken)
+    public async Task<bool> DeleteHotel(Domain.Models.Hotel hotel, CancellationToken cancellationToken)
     {
-        await context.Countries.AddAsync(country, cancellationToken);
+        context.Hotels.Remove(hotel);
         var row = await context.SaveChangesAsync(cancellationToken);
         return row > 0;
     }
-    
+
     public async Task<Domain.Models.Hotel?> GetHotel(Guid id, CancellationToken cancellationToken) 
         => await context.Hotels.FirstOrDefaultAsync(hotel => hotel.Id == id, cancellationToken);
 

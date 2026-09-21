@@ -41,6 +41,18 @@ public class HotelsController(ISender mediator) : ControllerBase
             ? Ok(response.ToDto())
             : BadRequest();
     }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(typeof(HotelResponseDto<Domain.Models.Hotel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteHotel([FromRoute] Guid id)
+    {
+        var command = new DeleteHotelCommand(id);
+        var response = await mediator.Send(command);
+        return response.IsSuccessful
+            ? Ok()
+            : BadRequest();
+    }
     
     [HttpGet]
     [ProducesResponseType(typeof(HotelResponseDto<IEnumerable<Domain.Models.Hotel>>), StatusCodes.Status200OK)]
