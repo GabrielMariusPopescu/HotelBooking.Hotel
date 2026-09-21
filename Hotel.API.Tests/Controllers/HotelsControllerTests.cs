@@ -178,6 +178,62 @@ public class HotelsControllerTests
 
     #endregion
 
+    #region Delete Tests
+
+    [Fact]
+    public async Task DeleteHotel_WhenCommandIsSuccessful_ReturnsOk()
+    {
+        // Arrange
+        var hotelId = Guid.NewGuid();
+        var expectedCommand = new DeleteHotelCommand(hotelId);
+        var response = HotelResponse<Guid>.Success(expectedCommand.Id, hotelId);
+        
+        _mediatorMock
+            .Setup(sender => sender.Send(It.Is<DeleteHotelCommand>(command => command.Id == hotelId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var actual = await _sut.DeleteHotel(hotelId);
+
+        // Assert
+        var okResult = actual.Should().BeOfType<OkResult>().Subject;
+        okResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+        // Verify
+        _mediatorMock.Verify(sender => sender.Send(
+            It.Is<DeleteHotelCommand>(command => command.Id == hotelId),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteHotel_WhenCommandFails_ReturnsBadRequest()
+    {
+        // Arrange
+        var hotelId = Guid.NewGuid();
+        var expectedCommand = new DeleteHotelCommand(hotelId);
+        var response = HotelResponse<Guid>.Failure(expectedCommand.Id, $"Hotel with '{hotelId}' was not found.");
+
+        _mediatorMock
+            .Setup(m => m.Send(It.Is<DeleteHotelCommand>(c => c.Id == hotelId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var actual = await _sut.DeleteHotel(hotelId);
+
+        // Assert
+        var badRequestResult = actual.Should().BeOfType<BadRequestResult>().Subject;
+        badRequestResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+        // Verify 
+        _mediatorMock.Verify(sender => sender.Send(
+            It.Is<DeleteHotelCommand>(command => command.Id == hotelId),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    #endregion
+
     #region Get All Tests
     [Fact]
     public async Task GetHotels_WhenExisting_SendsQueryAndReturnsSuccess()

@@ -121,6 +121,56 @@ public class HotelsIntegrationTests(HotelFactory factory) : IClassFixture<HotelF
 
     #endregion
 
+    #region Delete Hotel Tests
+
+    [Fact]
+    public async Task DeleteHotel_WhenValidRequest_ReturnsOk()
+    {
+        // Arrange
+        const string uniqueName = $"To-Delete Resort";
+
+        var createRequest = new CreateHotelRequest
+        {
+            Name = uniqueName,
+            Street = "123 Ocean Drive",
+            City = "Vice City",
+            ZipCode = "33139",
+            Country = "US"
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/hotels", createRequest, TestContext.Current.CancellationToken);
+
+        if (!createResponse.IsSuccessStatusCode)
+        {
+            var error = await createResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"API Failed with {createResponse.StatusCode}. Details: {error}");
+        }
+
+        var createdHotel = await createResponse.Content.ReadFromJsonAsync<HotelResponseDto<Domain.Models.Hotel>>(cancellationToken: TestContext.Current.CancellationToken);
+        createdHotel.Should().NotBeNull();
+
+        // Act
+        var actual = await _client.DeleteAsync($"/api/hotels/{createdHotel.Id}", TestContext.Current.CancellationToken);
+
+        // Assert: Validates the 200 OK mapped in the controller's success branch
+        actual.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task DeleteHotel_WhenHotelDoesNotExist_ReturnsBadRequest()
+    {
+        // Arrange
+        var nonExistentId = Guid.NewGuid();
+
+        // Act
+        var actual = await _client.DeleteAsync($"/api/hotels/{nonExistentId}", TestContext.Current.CancellationToken);
+
+        // Assert
+        actual.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    #endregion
+
     #region Get All Tests
 
     [Fact]

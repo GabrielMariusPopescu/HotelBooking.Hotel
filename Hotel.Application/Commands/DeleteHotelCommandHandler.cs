@@ -10,7 +10,7 @@ public class DeleteHotelCommandHandler(IHotelRepository repository) : IRequestHa
 
         var deleted = await repository.DeleteHotel(hotel, cancellationToken);
         return deleted
-            ? HotelResponse<Guid>.Success(request.Id, hotel.Id)
-            : HotelResponse<Guid>.Failure(request.Id, $"Hotel with '{hotel.Id}' identifier not updated.");
+            ? HotelResponse<Guid>.Success(null, hotel.Id)
+            : HotelResponse<Guid>.Failure(null, $"Hotel with '{request.Id}' identifier not updated.");
     }
 }
