@@ -67,7 +67,7 @@ public class UpdateHotelCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenUpdateHotelFails_ReturnsFailure()
+    public async Task Handle_WhenHotelCountryUpdateFails_ReturnsFailure()
     {
         // Arrange
         var command = CreateValidCommand();
@@ -92,6 +92,37 @@ public class UpdateHotelCommandHandlerTests
         // Verify
         _repositoryMock.Verify(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
         _repositoryMock.Verify(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Once);
+
+    }
+
+    [Fact]
+    public async Task Handle_WhenUpdateHotelFails_ReturnsFailure()
+    {
+        // Arrange
+        var command = CreateValidCommand();
+        var existingHotel = CreateExistingHotel(command.Id);
+
+        _repositoryMock
+            .Setup(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingHotel);
+
+        existingHotel.Address = new Address("123 Old St", "New York", "12345", "Romania");
+
+        _repositoryMock
+            .Setup(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        // Act
+        var actual = await _sut.Handle(command, CancellationToken.None);
+
+        // Assert
+        actual.IsSuccessful.Should().BeFalse();
+        actual.Message.Should().Contain($"Country for hotel with '{existingHotel.Id}' identifier cannot be updated.");
+        actual.Message.Should().Contain(command.Id.ToString());
+
+        // Verify
+        _repositoryMock.Verify(repository => repository.GetHotel(command.Id, It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(repository => repository.UpdateHotel(It.IsAny<Domain.Models.Hotel>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     #endregion
@@ -116,7 +147,7 @@ public class UpdateHotelCommandHandlerTests
         return new Domain.Models.Hotel(
             id,
             "Old Grand Plaza",
-            new Address("123 Old St", "Metropolis", "12345", "US"));
+            new Address("123 Old St", "New York", "12345", "US"));
     }
 
     #endregion

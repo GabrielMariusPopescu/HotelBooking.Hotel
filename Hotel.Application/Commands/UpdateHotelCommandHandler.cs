@@ -8,6 +8,9 @@ public class UpdateHotelCommandHandler(IHotelRepository repository) : IRequestHa
         if (dbHotel == null)
             return HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Hotel with '{request.Id}' identifier not found.");
 
+        if (dbHotel.Address.Country != request.Country)
+            return HotelResponse<Domain.Models.Hotel>.Failure(request.Id, $"Country for hotel with '{request.Id}' identifier cannot be updated.");
+
         dbHotel.Name = request.Name;
             dbHotel.Address = 
             new Address(
@@ -15,7 +18,7 @@ public class UpdateHotelCommandHandler(IHotelRepository repository) : IRequestHa
                 request.City, 
                 request.ZipCode, 
                 request.Country);
-        
+            
         var updated = await repository.UpdateHotel(dbHotel, cancellationToken);
         return updated
             ? HotelResponse<Domain.Models.Hotel>.Success(request.Id, dbHotel)
