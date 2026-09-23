@@ -15,3 +15,6 @@
 /.vs/ProjectEvaluation
 /Hotel.API.Tests/bin/Debug/net8.0
 /Hotel.API.Tests/obj
+/Hotel.API/logs
+/Hotel.API/appsettings.Staging.json
+/Hotel.API/appsettings.Production.json

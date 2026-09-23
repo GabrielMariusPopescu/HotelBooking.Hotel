@@ -13,3 +13,8 @@ global using Hotel.Persistence;
 global using MediatR;
 global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc;
+global using NpgsqlTypes;
+global using Serilog;
+global using Serilog.Sinks.PostgreSQL;
+global using System.Diagnostics;
+global using System.Diagnostics.CodeAnalysis;
